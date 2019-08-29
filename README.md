@@ -1,0 +1,2 @@
+# Automatic_information_platform_for_LinuxSystem
+对多个Linux系统自动获取其系统信息的平台
