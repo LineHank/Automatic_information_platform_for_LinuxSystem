@@ -1,2 +1,7 @@
 # Automatic_information_platform_for_LinuxSystem
 对多个Linux系统自动获取其系统信息的平台
+
+
+首先现在本地或者Linux等系统上安装mysql数据库
+
+用
