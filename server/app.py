@@ -12,7 +12,7 @@ import paramiko
 
 app = Flask(__name__)
 # 配置数据库的地址
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://howe:1224@192.168.150.8:3306/system_information'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://howe:XXXX@192.168.150.8:3306/system_information'
 # 跟踪数据库的修改，不建议开启
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db.init_app(app)
