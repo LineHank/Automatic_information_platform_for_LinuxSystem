@@ -12,7 +12,7 @@ import paramiko
 
 app = Flask(__name__)
 # 配置数据库的地址
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://howe:XXXX@192.168.150.8:3306/system_information'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://howe:1224@192.168.150.8:3306/system_information'
 # 跟踪数据库的修改，不建议开启
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db.init_app(app)
@@ -92,7 +92,7 @@ def update_delete():
     id = request.json.get('id')
     if id:
         message = Os_infotmation.query.get(id)
-        message.tableState = "删除"
+        message.tableState = "此信息已删除"
         db.session.commit()
         return jsonify({'code': 200})
     return jsonify({'code': 400})
@@ -105,14 +105,22 @@ def dialogdeicde_update():
     ip = request.json.get('ip')
     username = request.json.get('username')
     password = request.json.get('password')
+    currentPage = request.json.get('currentPage')
+    pagesize = request.json.get('pagesize')
     if id:
         message = Os_infotmation.query.get(id)
         message.ip=ip
         message.username=username
         message.password=password
         db.session.commit()
-        return jsonify({'code': 200})
-    return jsonify({'code': 400})
+        os = Os_infotmation.query.filter(Os_infotmation.tableState == "编辑").paginate(int(currentPage), int(pagesize),   False)
+        result = []
+        for r in os.items:
+            result.append(r.to_json())
+        if result == "":
+            return jsonify({'code': 400})
+        else:
+            return json.dumps(result, ensure_ascii=False)
 
 @app.route('/register_get', methods=('GET',))
 def register_get():
@@ -153,6 +161,34 @@ def currentPage_pagesize():
         return jsonify({'code': 400})
     else:
         return json.dumps(result, ensure_ascii=False)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    check()
+    if request.method == 'POST':
+        id = request.json.get('id')
+        os = Os_infotmation.query.filter(Os_infotmation.id == id).all()
+        result = []
+        for r in os:
+            result.append(r.to_json())
+        if result == "":
+            return jsonify({'code': 400})
+        else:
+            print(result)
+            return json.dumps(result, ensure_ascii=False)
+    if request.method == 'GET':
+        os = Os_infotmation.query.filter().all()
+        result = []
+        for r in os:
+            result.append(r.to_json())
+        if result == "":
+            return jsonify({'code': 400})
+        else:
+            return json.dumps(result, ensure_ascii=False)
+
+    # return render_template('login.html', error=error)
+
 
 
 if __name__ == "__main__":
